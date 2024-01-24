@@ -5,17 +5,16 @@ namespace ProvaPub.Services
 {
 	public class ProductService
 	{
-		TestDbContext _ctx;
+		private readonly TestDbContext _ctx;
 
 		public ProductService(TestDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public ProductList  ListProducts(int page)
+		public ProductList ListProducts(int page)
 		{
-			return new ProductList() {  HasNext=false, TotalCount =10, Products = _ctx.Products.ToList() };
+			return new(_ctx.Products.ToList()) { HasNext=false, TotalCount=10 };
 		}
-
 	}
 }

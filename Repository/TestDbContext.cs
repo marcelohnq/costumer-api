@@ -26,10 +26,9 @@ namespace ProvaPub.Repository
 			List<Customer> result = new();
 			for (int i = 0; i < 20; i++)
 			{
-				result.Add(new Customer()
+				result.Add(new Customer(new Faker().Person.FullName)
 				{
-					 Id = i+1,
-					Name = new Faker().Person.FullName,
+					Id = i+1
 				});
 			}
 			return result.ToArray();
@@ -39,10 +38,9 @@ namespace ProvaPub.Repository
 			List<Product> result = new();
 			for (int i = 0; i < 20; i++)
 			{
-				result.Add(new Product()
+				result.Add(new Product(new Faker().Commerce.ProductName())
 				{
-					Id = i + 1,
-					Name = new Faker().Commerce.ProductName()
+					Id = i + 1
 				});
 			}
 			return result.ToArray();

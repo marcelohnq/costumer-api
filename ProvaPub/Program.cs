@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
 
@@ -14,6 +15,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<RandomService>();
 builder.Services.AddDbContext<TestDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
+
+builder.Services.AddScoped(typeof(IGenericDbContext<>), typeof(GenericDbContext<>));
+builder.Services.AddScoped(typeof(CustomerService));
+builder.Services.AddScoped(typeof(OrderService));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

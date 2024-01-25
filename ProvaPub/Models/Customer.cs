@@ -1,5 +1,8 @@
-﻿namespace ProvaPub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProvaPub.Models
 {
+    [Table("Customers")]
     public class Customer
     {
         public Customer(string name) => Name = name;

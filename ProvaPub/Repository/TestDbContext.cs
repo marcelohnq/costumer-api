@@ -1,13 +1,11 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace ProvaPub.Repository
 {
 
-	public class TestDbContext : DbContext
+    public class TestDbContext : DbContext
 	{
 		public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
 		{

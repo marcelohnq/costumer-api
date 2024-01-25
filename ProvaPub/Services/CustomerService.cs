@@ -15,7 +15,7 @@ namespace ProvaPub.Services
 
         public CustomerList ListCustomers(int page)
         {
-            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.Customers.ToList() };
+            return new(_ctx.Customers.ToList()) { HasNext = false, TotalCount = 10 };
         }
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
@@ -35,7 +35,7 @@ namespace ProvaPub.Services
                 return false;
 
             //Business Rule: A customer that never bought before can make a first purchase of maximum 100,00
-            var haveBoughtBefore = await _ctx.Customers.CountAsync(s => s.Id == customerId && s.Orders.Any());
+            var haveBoughtBefore = await _ctx.Customers.CountAsync(s => s.Id == customerId && s.Orders != null && s.Orders.Any());
             if (haveBoughtBefore == 0 && purchaseValue > 100)
                 return false;
 

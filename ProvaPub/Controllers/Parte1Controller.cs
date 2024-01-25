@@ -17,6 +17,11 @@ namespace ProvaPub.Controllers
         {
             _randomService = randomService;
         }
+
+        /// <summary>
+        /// Retorna um número aleatório
+        /// </summary>
+        /// <returns>Número inteiro</returns>
         [HttpGet]
         public int Index()
         {

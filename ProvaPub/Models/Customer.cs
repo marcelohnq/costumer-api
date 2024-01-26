@@ -1,10 +1,12 @@
-﻿namespace ProvaPub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProvaPub.Models
 {
-    public class Customer
+    [Table("Customers")]
+    public class Customer : Entity
     {
         public Customer(string name) => Name = name;
 
-        public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<Order>? Orders { get; set; }
     }

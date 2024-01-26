@@ -1,8 +1,10 @@
-﻿namespace ProvaPub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProvaPub.Models
 {
-    public class Order
+    [Table("Orders")]
+    public class Order : Entity
     {
-        public int Id { get; set; }
         public decimal Value { get; set; }
         public int CustomerId { get; set; }
         public DateTime OrderDate { get; set; }

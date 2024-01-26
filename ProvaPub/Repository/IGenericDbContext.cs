@@ -9,5 +9,6 @@ namespace ProvaPub.Repository
         Task<EntityList<TEntity>> GetPagination(int page, int size = 10);
         Task<TEntity?> Get(int id);
         Task<int> Count(Expression<Func<TEntity, bool>> expression);
+        Task<bool> Add(TEntity entity);
     }
 }

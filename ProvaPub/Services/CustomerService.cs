@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProvaPub.Models;
+﻿using ProvaPub.Models;
 using ProvaPub.Repository;
 
 namespace ProvaPub.Services

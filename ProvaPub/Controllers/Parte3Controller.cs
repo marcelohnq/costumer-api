@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProvaPub.Models;
-using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.Services.Payment;
 
 namespace ProvaPub.Controllers
 {
@@ -24,9 +24,9 @@ namespace ProvaPub.Controllers
         }
 
         [HttpGet("orders")]
-        public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId)
+        public async Task<Order> PlaceOrder(PaymentMethod paymentMethod, decimal paymentValue, int customerId)
         {
-            return await _orderService.PayOrder(paymentMethod, paymentValue, customerId);
+            return await _orderService.PayOrder(PaymentClass.Get(paymentMethod, paymentValue), customerId);
         }
     }
 }

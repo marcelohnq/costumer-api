@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Org.BouncyCastle.Asn1.X509;
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
@@ -14,8 +15,8 @@ namespace ProvaPub.Tests.Services
 
         public CustomerServiceTests()
         {
-            _ctxCustomerMock = new Mock<IGenericDbContext<Customer>>();
-            _ctxOrderMock = new Mock<IGenericDbContext<Order>>();
+            _ctxCustomerMock = new Mock<IGenericDbContext<Customer>>(MockBehavior.Strict);
+            _ctxOrderMock = new Mock<IGenericDbContext<Order>>(MockBehavior.Strict);
             _customerService = new(_ctxCustomerMock.Object, _ctxOrderMock.Object);
         }
 
@@ -36,7 +37,7 @@ namespace ProvaPub.Tests.Services
         public async Task CanPurchase_InvalidOperationException()
         {
             // Customer não existe
-            _ = _ctxCustomerMock.SetupSequence(c => c.Get(1)).ReturnsAsync((Customer?)null);
+            _ = _ctxCustomerMock.Setup(c => c.Get(1)).ReturnsAsync((Customer?)null);
             InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _ = _customerService.CanPurchase(1, 1000));
             Assert.Equal("Customer Id 1 does not exists", exception.Message);
         }
@@ -45,12 +46,14 @@ namespace ProvaPub.Tests.Services
         public async Task CanPurchase_OnlySingleTimeMonth()
         {
             Customer customer = new("Teste") { Id = 1 };
+            Order order = new() { CustomerId = customer.Id, OrderDate = DateTime.UtcNow.AddMonths(-1).Date };
 
             // Customer existe
-            _ = _ctxCustomerMock.SetupSequence(c => c.Get(1)).ReturnsAsync(customer);
+            _ = _ctxCustomerMock.Setup(c => c.Get(1)).ReturnsAsync(customer);
             // Já comprou no mês
-            _ = _ctxOrderMock.SetupSequence(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(1);
-            Assert.False(await _customerService.CanPurchase(1, 1000));
+            _ = _ctxOrderMock.Setup(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(
+                (Expression<Func<Order, bool>> param) => MockCount(param, order));
+            Assert.False(await _customerService.CanPurchase(1, 10));
         }
 
         [Theory]
@@ -61,13 +64,16 @@ namespace ProvaPub.Tests.Services
         public async Task CanPurchase_FirstPurchaseMax(decimal payment, bool expected)
         {
             Customer customer = new("Teste") { Id = 1 };
+            Order order = new();
 
             // Customer existe
-            _ = _ctxCustomerMock.SetupSequence(c => c.Get(1)).ReturnsAsync(customer);
+            _ = _ctxCustomerMock.Setup(c => c.Get(1)).ReturnsAsync(customer);
             // Não comprou no mês
-            _ = _ctxOrderMock.SetupSequence(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(0);
+            _ = _ctxOrderMock.Setup(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(
+                (Expression<Func<Order, bool>> param) => MockCount(param, order));
             // Nunca comprou
-            _ = _ctxCustomerMock.SetupSequence(c => c.Count(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(0);
+            _ = _ctxCustomerMock.Setup(c => c.Count(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(
+                (Expression<Func<Customer, bool>> param) => MockCount(param, customer));
             Assert.Equal(expected, await _customerService.CanPurchase(1, payment));
         }
 
@@ -78,15 +84,31 @@ namespace ProvaPub.Tests.Services
         [InlineData(99)]
         public async Task CanPurchase(decimal payment)
         {
-            Customer customer = new("Teste") { Id = 1 };
+            Customer customer = new("Teste")
+            {
+                Id = 1,
+                Orders = new List<Order>() { new() { CustomerId = 1, OrderDate = DateTime.UtcNow.AddMonths(-2).Date } }
+            };
 
             // Customer existe
-            _ = _ctxCustomerMock.SetupSequence(c => c.Get(1)).ReturnsAsync(customer);
+            _ = _ctxCustomerMock.Setup(c => c.Get(1)).ReturnsAsync(customer);
             // Não comprou no mês
-            _ = _ctxOrderMock.SetupSequence(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(0);
+            _ = _ctxOrderMock.Setup(o => o.Count(It.IsAny<Expression<Func<Order, bool>>>())).ReturnsAsync(
+                (Expression<Func<Order, bool>> param) => MockCount(param, customer.Orders.First()));
             // Já fez a primeira compra
-            _ = _ctxCustomerMock.SetupSequence(c => c.Count(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(1);
+            _ = _ctxCustomerMock.Setup(c => c.Count(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(
+                (Expression<Func<Customer, bool>> param) => MockCount(param, customer));
             Assert.True(await _customerService.CanPurchase(1, payment));
+        }
+
+        private static int MockCount<T>(Expression<Func<T, bool>> param, T entity)
+        {
+            if (param.Compile().Invoke(entity))
+            {
+                return 1;
+            }
+
+            return 0;
         }
     }
 }

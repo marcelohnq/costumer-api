@@ -4,7 +4,7 @@ using ProvaPub.Repository;
 using ProvaPub.Services;
 using System.Linq.Expressions;
 
-namespace ProvaPub.Tests
+namespace ProvaPub.Tests.Services
 {
     public class CustomerServiceTests
     {
@@ -26,7 +26,6 @@ namespace ProvaPub.Tests
         [InlineData(0, 0)]
         [InlineData(0, 1)]
         [InlineData(1, 0)]
-        [InlineData(0, 1.0)]
         [InlineData(-1, 133.55)]
         public async Task CanPurchase_ArgumentOutOfRangeException(int customerId, decimal purchaseValue)
         {

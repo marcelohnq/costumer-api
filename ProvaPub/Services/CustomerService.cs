@@ -23,7 +23,7 @@ namespace ProvaPub.Services
             Customer customer = await _ctxCustomer.Get(customerId) ?? throw new InvalidOperationException($"Customer Id {customerId} does not exists");
 
             //Business Rule: A customer can purchase only a single time per month
-            DateTime baseDate = DateTime.UtcNow.AddMonths(-1);
+            DateTime baseDate = DateTime.UtcNow.AddMonths(-1).Date;
             int ordersInThisMonth = await _ctxOrder.Count(s => s.CustomerId == customerId && s.OrderDate >= baseDate);
             if (ordersInThisMonth > 0)
             {

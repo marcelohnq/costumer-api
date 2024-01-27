@@ -1,14 +1,12 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-
-namespace ProvaPub.Tests
+namespace ProvaPub.Tests.Controllers
 {
-    public class Parte1ControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class Parte1ControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         private const string Route = "/Parte1";
 
         private readonly HttpClient _client;
 
-        public Parte1ControllerTests(WebApplicationFactory<Program> factory)
+        public Parte1ControllerTests(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -44,7 +42,7 @@ namespace ProvaPub.Tests
             HttpResponseMessage response = await _client.GetAsync(Route);
             string result1 = await response.Content.ReadAsStringAsync();
 
-            for (int i=0; i<100; i++)
+            for (int i = 0; i < 100; i++)
             {
                 response = await _client.GetAsync(Route);
                 string result2 = await response.Content.ReadAsStringAsync();

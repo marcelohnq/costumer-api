@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ProvaPub.Models;
 
-namespace ProvaPub.Tests
+namespace ProvaPub.Tests.Controllers
 {
-    public class Parte2ControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class Parte2ControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         private const string RouteProducts = "/Parte2/products";
         private const string RouteCustomers = "/Parte2/customers";
 
         private readonly HttpClient _client;
 
-        public Parte2ControllerTests(WebApplicationFactory<Program> factory)
+        public Parte2ControllerTests(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }

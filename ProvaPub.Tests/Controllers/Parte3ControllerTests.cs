@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ProvaPub.Models;
 using ProvaPub.Services.Payment;
 
-namespace ProvaPub.Tests
+namespace ProvaPub.Tests.Controllers
 {
-    public class Parte3ControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class Parte3ControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         private const string RouteOrders = "/Parte3/orders";
         private const string CustomerId = "1";
 
         private readonly HttpClient _client;
 
-        public Parte3ControllerTests(WebApplicationFactory<Program> factory)
+        public Parte3ControllerTests(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -21,9 +20,9 @@ namespace ProvaPub.Tests
         [InlineData(PaymentMethod.Pix, 1, 1)]
         [InlineData(PaymentMethod.Creditcard, 1, 1.15)]
         [InlineData(PaymentMethod.Paypal, 1, 1.1)]
-        public async Task GetOrder(PaymentMethod pm, decimal payment, decimal expected)
+        public async Task PostOrder(PaymentMethod pm, decimal payment, decimal expected)
         {
-            Order? Order = await GetJson<Order>(RouteOrders, pm, payment);
+            Order? Order = await PostJson(RouteOrders, pm, payment);
 
             Assert.NotNull(Order);
             Assert.Equal(expected, Order.Value);
@@ -31,10 +30,10 @@ namespace ProvaPub.Tests
             Assert.Equal(DateTime.Now.ToShortDateString(), Order.OrderDate.ToShortDateString());
         }
 
-        private async Task<Order?> GetJson<T>(string url, PaymentMethod pm, decimal payment)
+        private async Task<Order?> PostJson(string url, PaymentMethod pm, decimal payment)
         {
             string request = $"{url}?paymentMethod={pm}&paymentValue={payment}&customerId={CustomerId}";
-            HttpResponseMessage response = await _client.GetAsync(request);
+            HttpResponseMessage response = await _client.PostAsync(request, null);
 
             // Check if HttpStatus is 200
             response.EnsureSuccessStatusCode();

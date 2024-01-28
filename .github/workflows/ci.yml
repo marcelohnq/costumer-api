@@ -20,13 +20,13 @@ jobs:
         if: success()
         run: |
           dotnet tool install --global dotnet-coverage
-          dotnet-coverage collect -f cobertura 'dotnet test --verbosity minimal --logger:junit --results-directory "./"'
+          dotnet-coverage collect -s 'settings-coverage.xml' -f cobertura 'dotnet test --verbosity minimal --logger:"html;logfilename=TestResults.html" --results-directory "./"'
       - name: Upload Artifact Fail Tests
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: fail-tests_report
-          path: ./TestResults.xml
+          path: ./TestResults.html
           retention-days: 30
       - name: Report Coverage
         if: success()

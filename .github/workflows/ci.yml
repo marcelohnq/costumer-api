@@ -1,0 +1,42 @@
+name: CI
+
+on: [pull_request, workflow_dispatch]
+    
+jobs:
+  dotnet:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build  /WarnAsError --configuration Release
+      - name: Test
+        if: success()
+        run: |
+          dotnet tool install --global dotnet-coverage
+          dotnet-coverage collect -f cobertura 'dotnet test --verbosity minimal --logger:junit --results-directory "./"'
+      - name: Upload Artifact Fail Tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: fail-tests_report
+          path: ./TestResults.xml
+          retention-days: 30
+      - name: Report Coverage
+        if: success()
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"output.cobertura.xml" -targetdir:"CodeCoverage" -reporttypes:"MarkdownSummaryGithub;Badges"
+          cat CodeCoverage/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+      - name: Check Coverage 90%
+        if: success()
+        run: |
+          chmod +x checkCobertura.sh
+          ./checkCobertura.sh output.cobertura.xml
+          exit $?

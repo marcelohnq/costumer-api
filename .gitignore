@@ -49,6 +49,7 @@ Generated\ Files/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+TestResults.xml
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
@@ -146,6 +147,9 @@ _TeamCity*
 coverage*.json
 coverage*.xml
 coverage*.info
+cobertura*.xml
+CodeCoverage/*
+output.cobertura.xml
 
 # Visual Studio code coverage results
 *.coverage

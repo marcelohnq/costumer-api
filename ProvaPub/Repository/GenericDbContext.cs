@@ -39,5 +39,11 @@ namespace ProvaPub.Repository
         public async Task<TEntity?> Get(int id) => await _dbSet.FindAsync(id);
 
         public async Task<int> Count(Expression<Func<TEntity, bool>> expression) => await _dbSet.CountAsync(expression);
+
+        public async Task<bool> Add(TEntity entity)
+        {
+            _ = await _dbSet.AddAsync(entity);
+            return _ctx.SaveChanges() == 1;
+        }
     }
 }

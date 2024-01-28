@@ -1,6 +1,6 @@
 ﻿using ProvaPub.Services.Payment;
 
-namespace ProvaPub.Tests
+namespace ProvaPub.Tests.Services
 {
     public class PaymentMethodTests
     {
@@ -8,7 +8,6 @@ namespace ProvaPub.Tests
         [InlineData(-1, -1)]
         [InlineData(0, 0)]
         [InlineData(1, 1)]
-        [InlineData(1.0, 1.0)]
         [InlineData(100.0, 100.0)]
         [InlineData(345345345.0, 345345345.0)]
         [InlineData(10.55, 10.55)]
@@ -22,7 +21,6 @@ namespace ProvaPub.Tests
         [InlineData(-1, -1.15)]
         [InlineData(0, 0)]
         [InlineData(1, 1.15)]
-        [InlineData(1.0, 1.15)]
         [InlineData(100.0, 115.0)]
         [InlineData(345345345.0, 397147146.75)]
         [InlineData(10.55, 12.1325)]
@@ -36,7 +34,6 @@ namespace ProvaPub.Tests
         [InlineData(-1, -1.1)]
         [InlineData(0, 0)]
         [InlineData(1, 1.1)]
-        [InlineData(1.0, 1.1)]
         [InlineData(100.0, 110.0)]
         [InlineData(345345345.0, 379879879.5)]
         [InlineData(10.55, 11.605)]

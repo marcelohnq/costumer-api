@@ -1,4 +1,4 @@
-# Prova BonifiQ Backend
+# Customer API
 
 [![DotNet CI](https://github.com/marcelohnq/prova-bonifiq/actions/workflows/ci.yml/badge.svg)](https://github.com/marcelohnq/prova-bonifiq/actions/workflows/ci.yml)
 
